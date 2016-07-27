@@ -7,6 +7,7 @@ import android.widget.TextView;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 
@@ -34,11 +35,12 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        Elements selectedDoc = doc.select(".mw-headline, p"); // crea el array de elementos a iterar con un select al doc
         //empieza a armar la string info que va a ponerse en el TextView tv
         info = "Summary\n\n"; //los articulos no tienen un subtitulo sumario al principio, asi que lo agregué, el \n\n es como apretar dos enter
-        info += doc.select(".mw-headline, p").get(0).text(); //1er parrafo
+        info += selectedDoc.get(0).text(); //1er parrafo
 
-        for (Element e : doc.select(".mw-headline, p")) { //por cada elemento ("casi seria un parrafo"), hace...
+        for (Element e : selectedDoc) { //por cada elemento ("casi seria un parrafo"), hace...
             if (e.tagName().contains("mw-headline")) { //si es el tagName del elemento contiene "headline" en su nombre, agrega un espacio extra antes de escribir el subtitulo
                 info += "\n";
             }
