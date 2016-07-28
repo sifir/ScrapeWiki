@@ -53,6 +53,12 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
 
         addSummaryView(); //metodo que agrega el primer subtitulo, que wikipedia no incluye
 
+        createViewsFromSelect(); //crea todos los views necesarios y los agrega al Layout
+
+        sv.addView(viewsLayout); //agrega el layout con todos los TextView al ScrollView
+    }
+
+    private void createViewsFromSelect() {
         for (Element e : selectedDoc) {
             TextView currentEle = new TextView(context); // empieza a armar el TextView para el elemento actual
 
@@ -66,7 +72,6 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
                 addTextView(e, currentEle); //le pasa las variables necesarias al metodo que hace el trabajo
             }
         }
-        sv.addView(viewsLayout); //agrega el layout con todos los TextView al ScrollView
     }
 
     private void addImageView(String src, TextView currentEle, ImageView currentImage) {
