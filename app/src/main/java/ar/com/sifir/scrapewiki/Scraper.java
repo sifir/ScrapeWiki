@@ -42,7 +42,7 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        selectedDoc = doc.select(".mw-headline, p"); // crea el array de elementos a iterar con un select al doc
+        selectedDoc = doc.select(".mw-headline, p, img"); // crea el array de elementos a iterar con un select al doc
 
         return null;
     }
@@ -60,10 +60,16 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
 
         for (Element e : selectedDoc) {
             TextView currentEle = new TextView(context); // empieza a armar el TextView para el elemento actual
+
             if (e.tagName().toString().contains("span")) { //asumo q todos los headlines contienen "span" en el tagname
-                currentEle.setText("\n"+e.text()+"\n"); //agrega un espacio antes y despues del subtitulo
-                currentEle.setPaintFlags(currentEle.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG); //subraya el subtitulo
+                currentEle.setText("\n" + e.text() + "\n"); //agrega un espacio antes y despues del subtitulo
+                currentEle.setPaintFlags(currentEle.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG); //subraya el subtitulo
                 viewsLayout.addView(currentEle); //agrega la view del subtitulo al layout
+            } else if (e.tagName().toString().contains("img")) {
+                String src = e.absUrl("src"); //obtiene un string con la url solamente
+                ImageScraper imgScraper = new ImageScraper(src, currentEle, context); // crea la clase q va a scrapear la imagen
+                imgScraper.execute(); //lo ejecuta
+                viewsLayout.addView(currentEle); //agrega la imagen al layout
             } else { //si no es headline...
                 currentEle.setText(e.text()); //simplemente pega el texto
                 viewsLayout.addView(currentEle); // y lo agrega al layout

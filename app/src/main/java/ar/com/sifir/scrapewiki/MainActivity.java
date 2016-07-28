@@ -19,12 +19,10 @@ public class MainActivity extends AppCompatActivity {
         final Button button = (Button) findViewById(R.id.button);
         final ScrollView scroller = (ScrollView) findViewById(R.id.scrollView);
         final LinearLayout viewsLayout = (LinearLayout) findViewById(R.id.viewsLayout);
+        final EditText busqueda = (EditText)findViewById(R.id.editText);
 
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-                EditText busqueda = (EditText)findViewById(R.id.editText);
-
                 Scraper scrap = new Scraper(scroller, viewsLayout, busqueda, getApplicationContext()); // le pasa el ScrollView donde estara el layout, el layout, la keyword y el contexto para crear TextViews
                 scrap.execute();
             }
