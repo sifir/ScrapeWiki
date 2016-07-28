@@ -24,6 +24,8 @@ public class ImageScraper extends AsyncTask<Void, Void, Void> {
     private Drawable d;
     private ImageView iv;
     private Bitmap bm;
+    private int width;
+    private int height;
 
     public ImageScraper(String src, Context context, ImageView currentImage) { //recibe los objetos q necesita
         url = src; //url donde esta la imagen
@@ -36,14 +38,28 @@ public class ImageScraper extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... params) {
         try {
+            //prueba de scrape para las imagenes HQ, deshabilitado porque explota la memoria del programa
+//            Connection.Response response = Jsoup
+//                    .connect(url)
+//                    .followRedirects(true)
+//                    .userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36")
+//                    .execute();
+//            String newUrl = response.url().toString();
+//            Document doc = Jsoup.connect(newUrl).get();
+//            Elements selectedDoc = doc.select(".fullImageLink > a");
+//            String fullSizeUrl = selectedDoc.first().attr("href");
+
         /* Open a new URL and get the InputStream to load data from it. */
+            //URL aURL = new URL("https://"+fullSizeUrl.substring(2));
             URL aURL = new URL(url);
             URLConnection conn = aURL.openConnection();
             conn.connect();
             InputStream is = conn.getInputStream();
+
         /* Buffered is always good for a performance plus. */
             BufferedInputStream bis = new BufferedInputStream(is);
         /* Decode url-data to a bitmap. */
+            is = conn.getInputStream();
             bm = BitmapFactory.decodeStream(bis);
             bis.close();
             is.close();
@@ -55,15 +71,7 @@ public class ImageScraper extends AsyncTask<Void, Void, Void> {
     }
 
     protected void onPostExecute(Void result) {
-        //iv.setImageBitmap(bm);
-        iv.setScaleType(ImageView.ScaleType.CENTER);
-        //LinearLayout.LayoutParams imageViewParams = new LinearLayout.LayoutParams(
-        //        LinearLayout.LayoutParams.WRAP_CONTENT,
-        //        LinearLayout.LayoutParams.MATCH_PARENT);
-        //iv.setLayoutParams(imageViewParams);
-        iv.setImageDrawable(d);
-        //iv.setAdjustViewBounds(true);
-        //tv.setCompoundDrawablesWithIntrinsicBounds(d,null,null,null); //esto hay que hacerlo "postExecute" porque sino android tira error, setea el drawable en el textview
-
+        iv.setScaleType(ImageView.ScaleType.FIT_CENTER); //centra el ImageView
+        iv.setImageDrawable(d); //setea la imagen del ImageView
     }
 }

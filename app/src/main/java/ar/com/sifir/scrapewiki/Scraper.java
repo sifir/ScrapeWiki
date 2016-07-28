@@ -20,11 +20,11 @@ import java.io.IOException;
  * Created by Sifir on 21/07/2016.
  */
 public class Scraper extends AsyncTask<Void, Void, Void> {
-    String busqueda; // el texto que viene en el EditText y que se agrega a la url de wikipedia para buscar el articulo
-    ScrollView sv; //el ScrollView que contiene las views para hacerlas scrolleables
-    Context context; //el contexto para crear views
-    LinearLayout viewsLayout; //layout que va en el ScrollView, contiene todos los TextView e ImageView
-    Elements selectedDoc; //array de elementos a iterar durante la operatoria
+    private String busqueda; // el texto que viene en el EditText y que se agrega a la url de wikipedia para buscar el articulo
+    private ScrollView sv; //el ScrollView que contiene las views para hacerlas scrolleables
+    private Context context; //el contexto para crear views
+    private LinearLayout viewsLayout; //layout que va en el ScrollView, contiene todos los TextView e ImageView
+    private Elements selectedDoc; //array de elementos a iterar durante la operatoria
 
     Scraper(ScrollView scroller, LinearLayout viewsLayout, EditText et, Context applicationContext) {
         this.sv = scroller;
@@ -45,6 +45,7 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
         }
         if (isValidDoc(doc)) { // solo si el articulo no da 404
             selectedDoc = doc.select(".mw-headline, p, img"); // crea el array de elementos a iterar con un select al doc
+            //selectedDoc = doc.select(".mw-headline, p, .image"); // select para imagenes HQ
         }
 
         return null;
@@ -84,17 +85,25 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
 
             if (e.tagName().contains("span")) { //asumo q todos los headlines contienen "span" en el tagname
                 addSubtitleView(e, currentEle); //le pasa las variables necesarias al metodo que hace el trabajo
+            //} else if (e.attr("class").contains("image")) { // para imagenes HQ, deshabilitado
             } else if (e.tagName().contains("img")) {
                 String src = e.absUrl("src"); //obtiene un string con la url solamente
+                //String src = "http://www.wikipedia.com"+e.attr("href"); para el scrape de imagenes HQ, deshabilitado
+
+                //para el scrape de width y height de la imagen, deshabilitado
+                //int width = Integer.parseInt(e.attr("width"));
+                //int height = Integer.parseInt(e.attr("height"));
+
                 ImageView currentImage = new ImageView(context); //crea el ImageView
-                addImageView(src, currentEle, currentImage); //le pasa las variables necesarias al metodo que hace el trabajo
+
+                addImageView(src, currentImage); //le pasa las variables necesarias al metodo que hace el trabajo
             } else { //si no es headline...
                 addTextView(e, currentEle); //le pasa las variables necesarias al metodo que hace el trabajo
             }
         }
     }
 
-    private void addImageView(String src, TextView currentEle, ImageView currentImage) {
+    private void addImageView(String src, ImageView currentImage) {
         ImageScraper imgScraper = new ImageScraper(src, context, currentImage); // crea la clase q va a scrapear la imagen
         imgScraper.execute(); //lo ejecuta
         viewsLayout.addView(currentImage); //agrega el ImageView al layout
