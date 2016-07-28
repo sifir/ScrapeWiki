@@ -7,6 +7,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.BufferedInputStream;
@@ -20,15 +21,17 @@ import java.net.URLConnection;
  */
 public class ImageScraper extends AsyncTask<Void, Void, Void> {
     private String url;
-    private TextView tv;
     private Context context;
     private Drawable d;
+    private ImageView iv;
+    private Bitmap bm;
 
-    public ImageScraper(String src, TextView currentEle, Context context) { //recibe los objetos q necesita
+    public ImageScraper(String src, TextView currentEle, Context context, ImageView currentImage) { //recibe los objetos q necesita
         url = src; //url donde esta la imagen
-        tv = currentEle; //TextView donde va la imagen
         this.context = context; //contexto para crear TextView
-        d = null; //drawable, la imagen en si para android
+        d = null; //drawable, la imagen en si para android, se inicializa para evitar errores
+        this.iv = currentImage; //el ImageView donde va la imagen
+        bm = null;
     }
 
     @Override
@@ -42,7 +45,7 @@ public class ImageScraper extends AsyncTask<Void, Void, Void> {
         /* Buffered is always good for a performance plus. */
             BufferedInputStream bis = new BufferedInputStream(is);
         /* Decode url-data to a bitmap. */
-            Bitmap bm = BitmapFactory.decodeStream(bis);
+            bm = BitmapFactory.decodeStream(bis);
             bis.close();
             is.close();
             d = new BitmapDrawable(context.getResources(), bm);
@@ -53,7 +56,15 @@ public class ImageScraper extends AsyncTask<Void, Void, Void> {
     }
 
     protected void onPostExecute(Void result) {
-        tv.setCompoundDrawablesWithIntrinsicBounds(d,null,null,null); //esto hay que hacerlo "postExecute" porque sino android tira error, setea el drawable en el textview
+        //iv.setImageBitmap(bm);
+        iv.setScaleType(ImageView.ScaleType.CENTER);
+        //LinearLayout.LayoutParams imageViewParams = new LinearLayout.LayoutParams(
+        //        LinearLayout.LayoutParams.WRAP_CONTENT,
+        //        LinearLayout.LayoutParams.MATCH_PARENT);
+        //iv.setLayoutParams(imageViewParams);
+        iv.setImageDrawable(d);
+        //iv.setAdjustViewBounds(true);
+        //tv.setCompoundDrawablesWithIntrinsicBounds(d,null,null,null); //esto hay que hacerlo "postExecute" porque sino android tira error, setea el drawable en el textview
 
     }
 }
