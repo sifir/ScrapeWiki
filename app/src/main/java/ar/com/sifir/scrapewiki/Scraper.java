@@ -38,24 +38,47 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
         Document doc = null; //inicializa el objeto para evitar errores
 
         try {
-            doc = Jsoup.connect("https://en.wikipedia.org/wiki/"+busqueda).get(); // parsea el articulo de wikipedia como un documento de jsoup
+            doc = Jsoup.connect("https://en.wikipedia.org/wiki/"+busqueda).ignoreHttpErrors(true).get(); // parsea el articulo de wikipedia como un documento de jsoup
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        selectedDoc = doc.select(".mw-headline, p, img"); // crea el array de elementos a iterar con un select al doc
+        if (isValidDoc(doc)) { // solo si el articulo no da 404
+            selectedDoc = doc.select(".mw-headline, p, img"); // crea el array de elementos a iterar con un select al doc
+        }
 
         return null;
     }
 
+    private boolean isValidDoc(Document doc) {
+        if (doc.select("p").get(0).text().contains("Other reasons this message")) { // equivale a un 404 de wikipedia
+            return false;
+        }
+        return true;
+    }
+
     protected void onPostExecute(Void result) {
-        sv.removeAllViews(); // limpia el scrollview porque solo puede tener 1 view adentro
+        if (selectedDoc != null) {
+            sv.removeAllViews(); // limpia el scrollview porque solo puede tener 1 view adentro
+            viewsLayout.removeAllViews(); // limpia el layout de views viejos
 
-        addSummaryView(); //metodo que agrega el primer subtitulo, que wikipedia no incluye
+            addSummaryView(); //metodo que agrega el primer subtitulo, que wikipedia no incluye
 
-        createViewsFromSelect(); //crea todos los views necesarios y los agrega al Layout
+            createViewsFromSelect(); //crea todos los views necesarios y los agrega al Layout
 
-        sv.addView(viewsLayout); //agrega el layout con todos los TextView al ScrollView
+            sv.addView(viewsLayout); //agrega el layout con todos los TextView al ScrollView
+        } else {
+            sv.removeAllViews(); // limpia el ScrollView
+            viewsLayout.removeAllViews(); // limpia el layout
+            addSorryView(); // agrega TextView sorry al layout
+            sv.addView(viewsLayout);  // agrega layout al ScrollView
+        }
+    }
+
+    private void addSorryView() {
+        TextView sorryView = new TextView(context); // nuevo TextView para informar del error
+        sorryView.setText("Couldn't find that article, sorry!"); // setea texto de error
+        viewsLayout.addView(sorryView); //agrega view al layout
     }
 
     private void createViewsFromSelect() {
