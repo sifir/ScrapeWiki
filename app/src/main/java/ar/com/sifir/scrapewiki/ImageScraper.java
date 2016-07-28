@@ -8,7 +8,6 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -26,7 +25,7 @@ public class ImageScraper extends AsyncTask<Void, Void, Void> {
     private ImageView iv;
     private Bitmap bm;
 
-    public ImageScraper(String src, TextView currentEle, Context context, ImageView currentImage) { //recibe los objetos q necesita
+    public ImageScraper(String src, Context context, ImageView currentImage) { //recibe los objetos q necesita
         url = src; //url donde esta la imagen
         this.context = context; //contexto para crear TextView
         d = null; //drawable, la imagen en si para android, se inicializa para evitar errores

@@ -51,10 +51,7 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
     }
 
     private boolean isValidDoc(Document doc) {
-        if (doc.select("p").get(0).text().contains("Other reasons this message")) { // equivale a un 404 de wikipedia
-            return false;
-        }
-        return true;
+        return !doc.select("p").get(0).text().contains("Other reasons this message"); // si el string del elemento 0 TIENE ese texto, entonces NO es valido el doc
     }
 
     protected void onPostExecute(Void result) {
@@ -77,7 +74,7 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
 
     private void addSorryView() {
         TextView sorryView = new TextView(context); // nuevo TextView para informar del error
-        sorryView.setText("Couldn't find that article, sorry!"); // setea texto de error
+        sorryView.setText(R.string.sorryText); // setea texto de error
         viewsLayout.addView(sorryView); //agrega view al layout
     }
 
@@ -85,9 +82,9 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
         for (Element e : selectedDoc) {
             TextView currentEle = new TextView(context); // empieza a armar el TextView para el elemento actual
 
-            if (e.tagName().toString().contains("span")) { //asumo q todos los headlines contienen "span" en el tagname
+            if (e.tagName().contains("span")) { //asumo q todos los headlines contienen "span" en el tagname
                 addSubtitleView(e, currentEle); //le pasa las variables necesarias al metodo que hace el trabajo
-            } else if (e.tagName().toString().contains("img")) {
+            } else if (e.tagName().contains("img")) {
                 String src = e.absUrl("src"); //obtiene un string con la url solamente
                 ImageView currentImage = new ImageView(context); //crea el ImageView
                 addImageView(src, currentEle, currentImage); //le pasa las variables necesarias al metodo que hace el trabajo
@@ -98,7 +95,7 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
     }
 
     private void addImageView(String src, TextView currentEle, ImageView currentImage) {
-        ImageScraper imgScraper = new ImageScraper(src, currentEle, context, currentImage); // crea la clase q va a scrapear la imagen
+        ImageScraper imgScraper = new ImageScraper(src, context, currentImage); // crea la clase q va a scrapear la imagen
         imgScraper.execute(); //lo ejecuta
         viewsLayout.addView(currentImage); //agrega el ImageView al layout
     }
