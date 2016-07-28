@@ -1,7 +1,11 @@
 package ar.com.sifir.scrapewiki;
 
+import android.content.Context;
+import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.jsoup.Jsoup;
@@ -15,15 +19,18 @@ import java.io.IOException;
  * Created by Sifir on 21/07/2016.
  */
 public class Scraper extends AsyncTask<Void, Void, Void> {
-    String info; // lo que va a setearse en el TextView
     String busqueda; // el texto que viene en el EditText y que se agrega a la url de wikipedia para buscar el articulo
-    TextView tv; // en donde va a ponerse la String info al final de todo el proceso
-    EditText et; // solo sirve para sacar la String busqueda
+    ScrollView sv;
+    Context context;
+    LinearLayout viewsLayout;
+    Elements selectedDoc;
 
-    Scraper(EditText et, TextView tv) {
-        this.tv = tv;
-        this.et = et;
-        busqueda = this.et.getText().toString();
+    Scraper(ScrollView scroller, LinearLayout viewsLayout, EditText et, Context applicationContext) {
+        this.sv = scroller;
+        busqueda = et.getText().toString(); // saque la keyword a buscar en wikipedia
+        this.context = applicationContext; //necesita el contexto para crear TextViews correctamente
+        this.viewsLayout = viewsLayout; //necesita el layout para poner los TextViews
+        this.selectedDoc = null; //inicializa la variable para evitar errores
     }
     @Override
     protected Void doInBackground(Void... params) {
@@ -35,24 +42,33 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        Elements selectedDoc = doc.select(".mw-headline, p"); // crea el array de elementos a iterar con un select al doc
-        //empieza a armar la string info que va a ponerse en el TextView tv
-        info = "Summary\n\n"; //los articulos no tienen un subtitulo sumario al principio, asi que lo agregué, el \n\n es como apretar dos enter
-        info += selectedDoc.get(0).text(); //1er parrafo
-
-        for (Element e : selectedDoc) { //por cada elemento ("casi seria un parrafo"), hace...
-            if (e.tagName().contains("mw-headline")) { //si es el tagName del elemento contiene "headline" en su nombre, agrega un espacio extra antes de escribir el subtitulo
-                info += "\n";
-            }
-            info += "\n"; //si no es "headline", solo tiene un punto y aparte
-            info += e.text();  //agrega el texto del elemento al string q estamos construyendo
-        }
+        selectedDoc = doc.select(".mw-headline, p"); // crea el array de elementos a iterar con un select al doc
 
         return null;
     }
 
     protected void onPostExecute(Void result) {
-        tv.setSingleLine(false); // setea al TextView para multilinea
-        tv.setText(info);        // setea la string armada
+        //tv.setSingleLine(false); // setea al TextView para multilinea
+        //tv.setText(info);        // setea la string armada
+        sv.removeAllViews(); // limpia el scrollview porque solo puede tener 1 view adentro
+
+        //agrega manualmente el primer subtitulo, que wikipedia no incluye
+        TextView summaryView = new TextView(context);
+        summaryView.setText("Summary"+"\n");
+        summaryView.setPaintFlags(summaryView.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG); //subraya el subtitulo
+        viewsLayout.addView(summaryView);
+
+        for (Element e : selectedDoc) {
+            TextView currentEle = new TextView(context); // empieza a armar el TextView para el elemento actual
+            if (e.tagName().toString().contains("span")) { //asumo q todos los headlines contienen "span" en el tagname
+                currentEle.setText("\n"+e.text()+"\n"); //agrega un espacio antes y despues del subtitulo
+                currentEle.setPaintFlags(currentEle.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG); //subraya el subtitulo
+                viewsLayout.addView(currentEle); //agrega la view del subtitulo al layout
+            } else { //si no es headline...
+                currentEle.setText(e.text()); //simplemente pega el texto
+                viewsLayout.addView(currentEle); // y lo agrega al layout
+            }
+        }
+        sv.addView(viewsLayout); //agrega el layout con todos los TextView al ScrollView
     }
 }
