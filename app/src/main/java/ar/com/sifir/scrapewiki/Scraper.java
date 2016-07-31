@@ -3,6 +3,7 @@ package ar.com.sifir.scrapewiki;
 import android.content.Context;
 import android.graphics.Paint;
 import android.os.AsyncTask;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,13 +26,16 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
     private Context context; //el contexto para crear views
     private LinearLayout viewsLayout; //layout que va en el ScrollView, contiene todos los TextView e ImageView
     private Elements selectedDoc; //array de elementos a iterar durante la operatoria
+    private Button buttonSpeedread;
 
-    Scraper(ScrollView scroller, LinearLayout viewsLayout, EditText et, Context applicationContext) {
+
+    Scraper(ScrollView scroller, LinearLayout viewsLayout, EditText et, Context applicationContext, Button buttonSpeedread) {
         this.sv = scroller;
         busqueda = et.getText().toString(); // saca la keyword a buscar en wikipedia
         this.context = applicationContext;
         this.viewsLayout = viewsLayout;
         this.selectedDoc = null; //inicializa la variable para evitar errores
+        this.buttonSpeedread = buttonSpeedread;
     }
     @Override
     protected Void doInBackground(Void... params) {
@@ -65,11 +69,13 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
             createViewsFromSelect(); //crea todos los views necesarios y los agrega al Layout
 
             sv.addView(viewsLayout); //agrega el layout con todos los TextView al ScrollView
+            buttonSpeedread.setEnabled(true);
         } else {
             sv.removeAllViews(); // limpia el ScrollView
             viewsLayout.removeAllViews(); // limpia el layout
             addSorryView(); // agrega TextView sorry al layout
             sv.addView(viewsLayout);  // agrega layout al ScrollView
+            buttonSpeedread.setEnabled(false);
         }
     }
 
@@ -125,5 +131,9 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
     private void addTextView(Element e, TextView currentEle) {
         currentEle.setText(e.text()); //simplemente pega el texto
         viewsLayout.addView(currentEle); // y lo agrega al layout
+    }
+
+    public LinearLayout getViewsLayout() {
+        return viewsLayout;
     }
 }

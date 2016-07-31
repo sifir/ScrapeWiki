@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/speedreadView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/buttonSpeedread"
+        android:id="@+id/buttonStartSpeedread"
+        android:onClick="startSpeedreading"
+        android:layout_marginTop="50dp"
+        android:layout_below="@+id/speedreadView"
+        android:layout_marginLeft="125dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/buttonStopSpeedread"
+        android:id="@+id/buttonStopSpeedread"
+        android:onClick="stopSpeedreading"
+        android:layout_alignTop="@+id/buttonStartSpeedread"
+        android:layout_toRightOf="@+id/buttonStartSpeedread"/>
+</RelativeLayout>

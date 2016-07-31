@@ -3,4 +3,7 @@
     <string name="buscar">Buscar</string>
     <string name="keyword">KeyWord</string>
     <string name="sorryText">Couldn\'t find that article, sorry!</string>
+    <string name="buttonSpeedRead">Speedread!</string>
+    <string name="buttonSpeedread">Start</string>
+    <string name="buttonStopSpeedread">Stop</string>
 </resources>
