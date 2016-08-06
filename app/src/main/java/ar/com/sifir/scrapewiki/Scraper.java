@@ -1,6 +1,7 @@
 package ar.com.sifir.scrapewiki;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.widget.EditText;
@@ -113,17 +114,20 @@ public class Scraper extends AsyncTask<Void, Void, Void> {
         TextView summaryView = new TextView(context); //crea el TextView
         summaryView.setText("Summary"+"\n"); //setea el texto del TextView
         summaryView.setPaintFlags(summaryView.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG); //subraya el subtitulo
+        summaryView.setTextColor(Color.BLACK); //font en negro
         viewsLayout.addView(summaryView); //agrega el TextView al layout
     }
 
     private void addSubtitleView(Element e, TextView currentEle) {
         currentEle.setText("\n" + e.text() + "\n"); //agrega un espacio antes y despues del subtitulo
         currentEle.setPaintFlags(currentEle.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG); //subraya el subtitulo
+        currentEle.setTextColor(Color.BLACK); //font en negro
         viewsLayout.addView(currentEle); //agrega el TextView al layout
     }
 
     private void addTextView(Element e, TextView currentEle) {
         currentEle.setText(e.text()); //simplemente pega el texto
+        currentEle.setTextColor(Color.BLACK); //font en negro
         viewsLayout.addView(currentEle); // y lo agrega al layout
     }
 }
